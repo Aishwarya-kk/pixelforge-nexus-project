@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Projects</title>
+
+<style>
+body{
+ font-family: Arial, sans-serif;
+ background: linear-gradient(135deg,#667eea,#764ba2);
+ margin:0;
+ height:100vh;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+}
+
+.container{
+ background:white;
+ padding:40px;
+ border-radius:10px;
+ box-shadow:0px 10px 25px rgba(0,0,0,0.2);
+ text-align:center;
+ width:300px;
+}
+
+h2{
+ margin-bottom:20px;
+ color:#333;
+}
+
+button{
+ padding:10px 20px;
+ border:none;
+ border-radius:6px;
+ background:#e74c3c;
+ color:white;
+ font-size:16px;
+ cursor:pointer;
+ transition:0.3s;
+}
+
+button:hover{
+ background:#c0392b;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Project Dashboard</h2>
+<h3>Project List</h3>
+
+<table  width="100%" id="projectTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+
+if(!token){
+ window.location.href = "login.html";
+}
+
+function logout(){
+ localStorage.removeItem("token");
+ window.location.href = "login.html";
+}
+async function loadProjects(){
+ try{
+  const res = await fetch("http://localhost:5000/api/projects",{
+   headers:{
+    "Authorization":"Bearer " + token
+   }
+  });
+
+  const data = await res.json();
+
+  const tbody = document.querySelector("#projectTable tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(p=>{
+   tbody.innerHTML += `
+    <tr>
+     <td>${p.name}</td>
+     <td>${p.status}</td>
+    </tr>
+   `;
+  });
+
+ }catch(err){
+  alert("Error loading projects");
+ }
+}
+
+loadProjects();
+</script>
+
+</body>
+</html>
